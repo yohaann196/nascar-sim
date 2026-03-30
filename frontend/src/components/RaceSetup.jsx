@@ -15,7 +15,7 @@ export default function RaceSetup({ selectedTrack, setSelectedTrack, onRaceCompl
   const [config, setConfig] = useState({
     total_laps: 200,
     driver_count: 40,
-    caution_prob: 0.04,
+    caution_prob: 0.02,
     fuel_window: 55,
     pit_road_time: 12.5,
   });
