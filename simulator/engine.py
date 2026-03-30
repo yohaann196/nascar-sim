@@ -45,11 +45,11 @@ class CarState:
 
 class RaceEngine:
     BASE_LAP_TIME = 30.5
-    SKILL_SPREAD = 2.5        # best driver is 2.5s/lap faster than worst
+    SKILL_SPREAD = 4.0        # best driver 4s/lap faster than worst -> ~800s over 200 laps
     TIRE_FALLOFF_RATE = 0.018
     FUEL_PER_LAP = 1 / 65
     PIT_ROAD_PENALTY = 22.0
-    NOISE_SIGMA = 0.08
+    NOISE_SIGMA = 0.06        # tight noise so skill dominates
 
     def __init__(
         self,
@@ -58,7 +58,7 @@ class RaceEngine:
         track_name: str = "Daytona International Speedway",
         fuel_window: int = 55,
         pit_road_time: float = 12.5,
-        caution_prob: float = 0.04,
+        caution_prob: float = 0.02,   # lowered from 0.04 -> ~4 cautions/200 laps
     ):
         self.drivers = drivers
         self.total_laps = total_laps
@@ -89,7 +89,9 @@ class RaceEngine:
 
     def _base_lap_time(self, car: CarState, caution: bool) -> float:
         if caution:
-            return self.BASE_LAP_TIME * 1.55 + random.gauss(0, 0.15)
+            # Under caution skill still applies — fast cars don't lose their gap entirely
+            skill_delta = (1.0 - car.driver.skill) * 0.8
+            return self.BASE_LAP_TIME * 1.55 + skill_delta + random.gauss(0, 0.08)
         skill_delta = (1.0 - car.driver.skill) * self.SKILL_SPREAD
         tire_delta = max(0, car.tire_age - 10) * self.TIRE_FALLOFF_RATE
         fuel_delta = car.fuel * 0.25
