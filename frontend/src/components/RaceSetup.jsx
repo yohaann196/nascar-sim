@@ -27,78 +27,66 @@ export default function RaceSetup({ selectedTrack, setSelectedTrack, onRaceCompl
       .catch(() => {});
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setConfig((c) => ({ ...c, [name]: parseFloat(value) }));
-  };
+  const set = (key) => (e) => setConfig((c) => ({ ...c, [key]: parseFloat(e.target.value) }));
 
   const runRace = async () => {
     setLoading(true);
     setError(null);
     try {
-      const result = await API.post("/simulate", {
-        track_id: selectedTrack,
-        ...config,
-      });
+      const result = await API.post("/simulate", { track_id: selectedTrack, ...config });
       onRaceComplete(result);
-    } catch (err) {
-      setError("Could not connect to API. Make sure the FastAPI server is running on port 8000.");
+    } catch {
+      setError("API unreachable — make sure the FastAPI server is running on port 8000.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="panel race-setup">
-      <h2>Race Configuration</h2>
-      {error && <div className="error-banner">{error}</div>}
+    <div className="race-setup">
+      <div className="section-label">Race Configuration</div>
 
-      <div className="form-grid">
-        <label>
-          Track
+      <div className="config-grid">
+        <div className="config-cell" style={{ gridColumn: "span 2" }}>
+          <label>Track</label>
           <select value={selectedTrack} onChange={(e) => setSelectedTrack(e.target.value)}>
             {tracks.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.name} ({t.length_miles} mi)
-              </option>
+              <option key={t.id} value={t.id}>{t.name}</option>
             ))}
           </select>
-        </label>
+        </div>
 
-        <label>
-          Total Laps
-          <input type="number" name="total_laps" value={config.total_laps}
-            min={10} max={500} onChange={handleChange} />
-        </label>
+        <div className="config-cell">
+          <label>Laps</label>
+          <input type="number" value={config.total_laps} min={10} max={500} onChange={set("total_laps")} />
+        </div>
 
-        <label>
-          Car Count
-          <input type="number" name="driver_count" value={config.driver_count}
-            min={2} max={40} onChange={handleChange} />
-        </label>
+        <div className="config-cell">
+          <label>Cars</label>
+          <input type="number" value={config.driver_count} min={2} max={40} onChange={set("driver_count")} />
+        </div>
 
-        <label>
-          Caution Probability
-          <input type="number" name="caution_prob" value={config.caution_prob}
-            step={0.01} min={0} max={0.3} onChange={handleChange} />
-        </label>
+        <div className="config-cell">
+          <label>Caution %</label>
+          <input type="number" value={config.caution_prob} step={0.01} min={0} max={0.3} onChange={set("caution_prob")} />
+        </div>
 
-        <label>
-          Fuel Window (laps)
-          <input type="number" name="fuel_window" value={config.fuel_window}
-            min={20} max={80} onChange={handleChange} />
-        </label>
+        <div className="config-cell">
+          <label>Fuel Window</label>
+          <input type="number" value={config.fuel_window} min={20} max={80} onChange={set("fuel_window")} />
+        </div>
 
-        <label>
-          Pit Road Time (sec)
-          <input type="number" name="pit_road_time" value={config.pit_road_time}
-            step={0.5} min={8} max={20} onChange={handleChange} />
-        </label>
+        <div className="config-cell">
+          <label>Pit Time (s)</label>
+          <input type="number" value={config.pit_road_time} step={0.5} min={8} max={20} onChange={set("pit_road_time")} />
+        </div>
       </div>
 
-      <button className="btn-primary" onClick={runRace} disabled={loading}>
-        {loading ? "Simulating…" : "🏁 Run Race"}
+      <button className="run-btn" onClick={runRace} disabled={loading}>
+        {loading ? <><span className="btn-loader" /> SIMULATING</> : "▶ RUN RACE"}
       </button>
+
+      {error && <div className="error-msg">{error}</div>}
     </div>
   );
 }
