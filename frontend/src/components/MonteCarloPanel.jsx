@@ -7,6 +7,8 @@ export default function MonteCarloPanel({ selectedTrack }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const set = (key) => (e) => setConfig((c) => ({ ...c, [key]: +e.target.value }));
+
   const run = async () => {
     setLoading(true);
     setError(null);
@@ -20,58 +22,59 @@ export default function MonteCarloPanel({ selectedTrack }) {
     }
   };
 
-  const maxWinPct = result ? result.win_percentages[0]?.win_pct ?? 1 : 1;
+  const maxPct = result?.win_percentages?.[0]?.win_pct ?? 1;
 
   return (
-    <div className="panel mc-panel">
-      <h2>Monte Carlo Win Probability</h2>
-      <p className="mc-desc">
-        Runs N independent race simulations and computes each driver's win rate.
+    <div className="mc-panel">
+      <div className="section-label">Monte Carlo Analysis</div>
+      <p style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--white-dim)", marginBottom: 20, letterSpacing: 1 }}>
+        Run N independent race simulations to compute win probabilities across the field.
       </p>
 
-      <div className="form-grid">
-        <label>
-          Simulations
-          <input type="number" value={config.n_simulations} min={10} max={500}
-            onChange={(e) => setConfig((c) => ({ ...c, n_simulations: +e.target.value }))} />
-        </label>
-        <label>
-          Drivers
-          <input type="number" value={config.driver_count} min={2} max={40}
-            onChange={(e) => setConfig((c) => ({ ...c, driver_count: +e.target.value }))} />
-        </label>
-        <label>
-          Laps
-          <input type="number" value={config.total_laps} min={10} max={500}
-            onChange={(e) => setConfig((c) => ({ ...c, total_laps: +e.target.value }))} />
-        </label>
+      <div className="mc-config">
+        <div className="config-cell">
+          <label>Simulations</label>
+          <input type="number" value={config.n_simulations} min={10} max={500} onChange={set("n_simulations")} />
+        </div>
+        <div className="config-cell">
+          <label>Drivers</label>
+          <input type="number" value={config.driver_count} min={2} max={40} onChange={set("driver_count")} />
+        </div>
+        <div className="config-cell">
+          <label>Laps</label>
+          <input type="number" value={config.total_laps} min={10} max={500} onChange={set("total_laps")} />
+        </div>
       </div>
 
-      <button className="btn-primary" onClick={run} disabled={loading}>
-        {loading ? `Running ${config.n_simulations} simulations…` : "▶ Run Monte Carlo"}
+      <button className="run-btn" onClick={run} disabled={loading}>
+        {loading
+          ? <><span className="btn-loader" /> RUNNING {config.n_simulations} RACES</>
+          : `▶ RUN ${config.n_simulations} SIMULATIONS`}
       </button>
 
-      {error && <div className="error-banner">{error}</div>}
+      {error && <div className="error-msg">{error}</div>}
 
       {result && (
-        <div className="mc-results">
-          <div className="mc-meta">
-            <span>{result.n_simulations} races simulated</span>
-            <span>Avg cautions: {result.avg_cautions}</span>
-            <span>Track: {result.track}</span>
+        <div className="mc-results" style={{ marginTop: 32 }}>
+          <div className="section-label">Win Probability</div>
+
+          <div className="mc-meta-row">
+            <div className="mc-meta-item"><strong>{result.n_simulations}</strong> RACES</div>
+            <div className="mc-meta-item"><strong>{result.avg_cautions}</strong> AVG CAUTIONS</div>
+            <div className="mc-meta-item"><strong>{result.track}</strong></div>
           </div>
-          <div className="mc-bars">
+
+          <div className="mc-bar-list">
             {result.win_percentages.slice(0, 15).map((d) => (
               <div key={d.number} className="mc-bar-row">
-                <span className="mc-driver">#{d.number} {d.name}</span>
-                <div className="mc-bar-bg">
-                  <div
-                    className="mc-bar-fill"
-                    style={{ width: `${(d.win_pct / maxWinPct) * 100}%` }}
-                  />
+                <div className="mc-name">
+                  <span>#{d.number}</span>{d.name}
                 </div>
-                <span className="mc-pct">{d.win_pct}%</span>
-                <span className="mc-avgf">avg P{d.avg_finish}</span>
+                <div className="mc-track">
+                  <div className="mc-fill" style={{ width: `${(d.win_pct / maxPct) * 100}%` }} />
+                </div>
+                <div className="mc-pct">{d.win_pct}%</div>
+                <div className="mc-avg">P{d.avg_finish} avg</div>
               </div>
             ))}
           </div>
