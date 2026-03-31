@@ -15,8 +15,7 @@ export default function RaceSetup({ selectedTrack, setSelectedTrack, onRaceCompl
   const [config, setConfig] = useState({
     total_laps: 200,
     driver_count: 40,
-    caution_prob: 0.02,
-    fuel_window: 55,
+    caution_prob: 0.03,
     pit_road_time: 12.5,
   });
   const [error, setError] = useState(null);
@@ -69,11 +68,6 @@ export default function RaceSetup({ selectedTrack, setSelectedTrack, onRaceCompl
         <div className="config-cell">
           <label>Caution %</label>
           <input type="number" value={config.caution_prob} step={0.01} min={0} max={0.3} onChange={set("caution_prob")} />
-        </div>
-
-        <div className="config-cell">
-          <label>Fuel Window</label>
-          <input type="number" value={config.fuel_window} min={20} max={80} onChange={set("fuel_window")} />
         </div>
 
         <div className="config-cell">

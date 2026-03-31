@@ -7,6 +7,7 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
+from typing import Optional
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -38,8 +39,8 @@ class SimulateRequest(BaseModel):
     track_id: str = Field("daytona", description="Track key, e.g. 'daytona'")
     total_laps: int = Field(200, ge=10, le=500)
     driver_count: int = Field(40, ge=2, le=40)
-    caution_prob: float = Field(0.04, ge=0.0, le=0.3)
-    fuel_window: int = Field(55, ge=20, le=80)
+    caution_prob: float = Field(0.03, ge=0.0, le=0.3)
+    fuel_window: Optional[int] = Field(None, ge=20, le=200)
     pit_road_time: float = Field(12.5, ge=8.0, le=20.0)
 
 
@@ -48,7 +49,7 @@ class MonteCarloRequest(BaseModel):
     n_simulations: int = Field(100, ge=10, le=1000)
     driver_count: int = Field(40, ge=2, le=40)
     total_laps: int = Field(200, ge=10, le=500)
-    caution_prob: float = Field(0.04, ge=0.0, le=0.3)
+    caution_prob: float = Field(0.03, ge=0.0, le=0.3)
 
 
 # ──────────────────────────────────────────────
@@ -107,6 +108,8 @@ def simulate_race(req: SimulateRequest):
         drivers=drivers,
         total_laps=req.total_laps,
         track_name=track.name,
+        track_type=track.shape,
+        track_length_miles=track.length_miles,
         fuel_window=req.fuel_window,
         pit_road_time=req.pit_road_time,
         caution_prob=req.caution_prob,
@@ -148,5 +151,7 @@ def quick_race(
         drivers=driver_list,
         total_laps=laps,
         track_name=track.name,
+        track_type=track.shape,
+        track_length_miles=track.length_miles,
     )
     return engine.run()
