@@ -1,23 +1,32 @@
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
+  /* Semantic color tokens */
   /* Backgrounds — warm beige palette */
-  --black: #f5f0e8;
-  --black2: #ece7dc;
-  --black3: #e4ddd1;
-  --black4: #dbd4c6;
+  --bg: #f5f0e8;
+  --surface-1: #ece7dc;
+  --surface-2: #e4ddd1;
+  --surface-3: #dbd4c6;
   /* Primary text — near black */
-  --white: #1a1a1a;
-  --white-dim: #6b6055;
-  --white-faint: #c0b8ab;
-  /* Accent — black for UI chrome */
+  --text: #1a1a1a;
+  --text-muted: #6b6055;
+  --text-faint: #c0b8ab;
+  /* Accent and status colours (kept vivid so they stand out on beige) */
   --accent: #1a1a1a;
-  /* Status colours (kept vivid so they stand out on beige) */
   --red: #b91c1c;
   --red-dim: #922b21;
   --yellow: #92720a;
   --green: #166016;
   --border: #c4bbb0;
+
+  /* Legacy aliases — prefer semantic tokens above for new code */
+  --black: var(--bg);
+  --black2: var(--surface-1);
+  --black3: var(--surface-2);
+  --black4: var(--surface-3);
+  --white: var(--text);
+  --white-dim: var(--text-muted);
+  --white-faint: var(--text-faint);
   --font-display: 'Barlow Condensed', sans-serif;
   --font-body: 'Barlow', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
