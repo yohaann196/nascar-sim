@@ -40,7 +40,7 @@ class SimulateRequest(BaseModel):
     total_laps: int = Field(200, ge=10, le=500)
     driver_count: int = Field(40, ge=2, le=40)
     caution_prob: float = Field(0.03, ge=0.0, le=0.3)
-    fuel_window: Optional[int] = Field(None, ge=20, le=200)
+    fuel_window: Optional[int] = Field(None, ge=20)
     pit_road_time: float = Field(12.5, ge=8.0, le=20.0)
 
 
