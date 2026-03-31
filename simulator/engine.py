@@ -213,11 +213,15 @@ class RaceEngine:
             return
         active.sort(key=lambda c: (c.lap, c.track_position), reverse=True)
         leader_pos = active[0].track_position
-        # Each car bunches to within CAUTION_BUNCH_INTERVAL track-fraction per position
+        # Each car bunches to within CAUTION_BUNCH_INTERVAL track-fraction per position.
+        # Use modulo arithmetic so cars near the 0.0/1.0 wrap-around are handled correctly:
+        # a car at 0.98 is only 0.04 behind a leader at 0.02, not 0.96 ahead.
         for i, car in enumerate(active[1:], 1):
-            target = leader_pos - (i * self.CAUTION_BUNCH_INTERVAL)
-            if car.track_position < target:
-                car.track_position = target
+            # Gap behind leader, measured going backwards around the track
+            gap = (leader_pos - car.track_position) % 1.0
+            target_gap = i * self.CAUTION_BUNCH_INTERVAL
+            if gap > target_gap:
+                car.track_position = (leader_pos - target_gap) % 1.0
 
     def _execute_pit(self, car: CarState):
         car.status = CarStatus.PITTING
