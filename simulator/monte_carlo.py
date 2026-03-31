@@ -24,9 +24,11 @@ def _single_run(args: dict) -> dict:
         drivers=drivers,
         total_laps=args["total_laps"],
         track_name=track.name,
-        fuel_window=args.get("fuel_window", 55),
+        track_type=track.shape,
+        track_length_miles=track.length_miles,
+        fuel_window=args.get("fuel_window"),
         pit_road_time=args.get("pit_road_time", 12.5),
-        caution_prob=args.get("caution_prob", 0.04),
+        caution_prob=args.get("caution_prob", 0.03),
     )
     result = engine.run()
     winner = result["finishing_order"][0]
@@ -45,7 +47,7 @@ def run_monte_carlo(
     n_simulations: int = 200,
     driver_count: int = 40,
     total_laps: int = 200,
-    caution_prob: float = 0.04,
+    caution_prob: float = 0.03,
     max_workers: int = 4,
     progress_callback: Callable[[int, int], None] | None = None,
 ) -> dict:

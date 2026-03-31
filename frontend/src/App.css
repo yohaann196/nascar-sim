@@ -1,18 +1,32 @@
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  --black: #0a0a0a;
-  --black2: #111111;
-  --black3: #1a1a1a;
-  --black4: #222222;
-  --red: #e8001c;
-  --red-dim: #a0001a;
-  --white: #f0f0f0;
-  --white-dim: #999;
-  --white-faint: #333;
-  --yellow: #f5c300;
-  --green: #00c853;
-  --border: #2a2a2a;
+  /* Semantic color tokens */
+  /* Backgrounds — warm beige palette */
+  --bg: #f5f0e8;
+  --surface-1: #ece7dc;
+  --surface-2: #e4ddd1;
+  --surface-3: #dbd4c6;
+  /* Primary text — near black */
+  --text: #1a1a1a;
+  --text-muted: #6b6055;
+  --text-faint: #c0b8ab;
+  /* Accent and status colours (kept vivid so they stand out on beige) */
+  --accent: #1a1a1a;
+  --red: #b91c1c;
+  --red-dim: #922b21;
+  --yellow: #92720a;
+  --green: #166016;
+  --border: #c4bbb0;
+
+  /* Legacy aliases — prefer semantic tokens above for new code */
+  --black: var(--bg);
+  --black2: var(--surface-1);
+  --black3: var(--surface-2);
+  --black4: var(--surface-3);
+  --white: var(--text);
+  --white-dim: var(--text-muted);
+  --white-faint: var(--text-faint);
   --font-display: 'Barlow Condensed', sans-serif;
   --font-body: 'Barlow', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
@@ -42,7 +56,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 20px 0 0;
-  border-bottom: 1px solid var(--red);
+  border-bottom: 1px solid var(--accent);
   margin-bottom: 0;
 }
 
@@ -56,9 +70,9 @@ body {
   font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 500;
-  color: var(--red);
-  background: rgba(232, 0, 28, 0.1);
-  border: 1px solid var(--red);
+  color: var(--accent);
+  background: rgba(26, 26, 26, 0.07);
+  border: 1px solid var(--accent);
   padding: 2px 6px;
   letter-spacing: 2px;
 }
@@ -124,8 +138,8 @@ body {
   transition: color 0.2s;
 }
 
-.tab-btn:hover { color: var(--white); }
-.tab-btn.active { color: var(--white); }
+.tab-btn:hover { color: var(--accent); }
+.tab-btn.active { color: var(--accent); }
 
 .tab-icon {
   font-size: 0.7rem;
@@ -137,7 +151,7 @@ body {
   bottom: -1px;
   width: 25%;
   height: 2px;
-  background: var(--red);
+  background: var(--accent);
   transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -146,7 +160,7 @@ body {
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 3px;
-  color: var(--red);
+  color: var(--white-dim);
   text-transform: uppercase;
   margin-bottom: 16px;
   display: flex;
@@ -206,7 +220,7 @@ body {
 
 .config-cell input:focus,
 .config-cell select:focus {
-  border-bottom-color: var(--red);
+  border-bottom-color: var(--accent);
 }
 
 .config-cell select option {
@@ -215,8 +229,8 @@ body {
 }
 
 .run-btn {
-  background: var(--red);
-  color: var(--white);
+  background: var(--accent);
+  color: #f5f0e8;
   border: none;
   padding: 0 40px;
   height: 52px;
@@ -233,12 +247,12 @@ body {
 }
 
 .run-btn:hover:not(:disabled) {
-  background: #ff0020;
+  background: #333333;
   transform: translateY(-1px);
 }
 
 .run-btn:disabled {
-  background: var(--red-dim);
+  background: var(--white-dim);
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -247,8 +261,8 @@ body {
   display: inline-block;
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: white;
+  border: 2px solid rgba(245,240,232,0.4);
+  border-top-color: #f5f0e8;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
@@ -389,13 +403,13 @@ body {
 .event-chip.caution {
   border-color: var(--yellow);
   color: var(--yellow);
-  background: rgba(245, 195, 0, 0.08);
+  background: rgba(146, 114, 10, 0.08);
 }
 
 .event-chip.dnf {
   border-color: var(--red);
   color: var(--red);
-  background: rgba(232, 0, 28, 0.08);
+  background: rgba(185, 28, 28, 0.07);
 }
 
 /* Results table */
@@ -408,7 +422,7 @@ body {
 }
 
 .results-table thead tr {
-  border-bottom: 1px solid var(--red);
+  border-bottom: 1px solid var(--accent);
 }
 
 .results-table th {
@@ -562,7 +576,7 @@ body {
 
 .mc-fill {
   height: 100%;
-  background: var(--red);
+  background: var(--accent);
   transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 }
@@ -572,7 +586,7 @@ body {
   position: absolute;
   top: 0; right: 0; bottom: 0;
   width: 2px;
-  background: rgba(255,255,255,0.3);
+  background: rgba(0,0,0,0.18);
 }
 
 .mc-pct {

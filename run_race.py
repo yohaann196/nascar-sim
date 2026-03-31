@@ -57,6 +57,8 @@ def run_single(track_id="daytona", laps=200, driver_count=20):
         drivers=drivers,
         total_laps=laps,
         track_name=track.name,
+        track_type=track.shape,
+        track_length_miles=track.length_miles,
     )
     result = engine.run()
     elapsed = time.time() - t0

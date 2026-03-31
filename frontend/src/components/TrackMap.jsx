@@ -80,7 +80,7 @@ export default function TrackMap({ trackId, raceResult }) {
       {!coords && !error && <div className="loading">Loading track geometry…</div>}
       <div
         ref={mapRef}
-        style={{ height: 480, borderRadius: 8, background: "#1a1a2e" }}
+        style={{ height: 480, borderRadius: 8, background: "var(--surface)" }}
       />
       <p className="map-note">
         Colored dots = top 10 car positions after last simulated lap.

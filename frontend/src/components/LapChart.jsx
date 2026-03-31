@@ -6,9 +6,9 @@ export default function LapChart({ lapHistory }) {
   const top10 = allNumbers.slice(0, 10);
 
   const COLORS = [
-    "#e8001c", "#f5c300", "#4fc3f7", "#81c784",
-    "#ff8a65", "#ce93d8", "#80cbc4", "#fff176",
-    "#ffb74d", "#f06292",
+    "#1a1a1a", "#c0392b", "#2471a3", "#1a7a1a",
+    "#8e44ad", "#e67e22", "#16a085", "#9b59b6",
+    "#f1c40f", "#2e86c1",
   ];
 
   const series = {};
@@ -44,14 +44,14 @@ export default function LapChart({ lapHistory }) {
     <div className="lap-chart-panel">
       <div className="section-label">Position Chart — Top 10</div>
       <div className="chart-wrap">
-        <svg viewBox={`0 0 ${W} ${H}`} style={{ background: "#0a0a0a" }}>
+        <svg viewBox={`0 0 ${W} ${H}`} style={{ background: "#f5f0e8" }}>
           {/* Caution bands */}
           {cautions.map((i) => (
             <rect key={i}
               x={xScale(i)} y={PAD.top}
               width={Math.max(2, IW / laps)}
               height={IH}
-              fill="rgba(245,195,0,0.06)"
+              fill="rgba(146,114,10,0.10)"
             />
           ))}
 
@@ -61,11 +61,11 @@ export default function LapChart({ lapHistory }) {
               <line
                 x1={PAD.left} x2={W - PAD.right}
                 y1={yScale(pos)} y2={yScale(pos)}
-                stroke="#1a1a1a" strokeWidth={1}
+                stroke="#c4bbb0" strokeWidth={1}
               />
               <text
                 x={PAD.left - 6} y={yScale(pos) + 4}
-                fill="#444" fontSize={9}
+                fill="#6b6055" fontSize={9}
                 textAnchor="end"
                 fontFamily="JetBrains Mono, monospace"
               >P{pos}</text>
@@ -76,7 +76,7 @@ export default function LapChart({ lapHistory }) {
           {lapTicks.map((i) => (
             <text key={i}
               x={xScale(i)} y={H - 8}
-              fill="#444" fontSize={9}
+              fill="#6b6055" fontSize={9}
               textAnchor="middle"
               fontFamily="JetBrains Mono, monospace"
             >{i + 1}</text>
