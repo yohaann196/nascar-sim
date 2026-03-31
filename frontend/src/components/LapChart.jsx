@@ -8,7 +8,7 @@ export default function LapChart({ lapHistory }) {
   const COLORS = [
     "#1a1a1a", "#c0392b", "#2471a3", "#1a7a1a",
     "#8e44ad", "#e67e22", "#16a085", "#9b59b6",
-    "#c0392b", "#2e86c1",
+    "#f1c40f", "#2e86c1",
   ];
 
   const series = {};
