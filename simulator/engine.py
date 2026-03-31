@@ -58,6 +58,15 @@ _INCIDENT_TYPES = [
 
 class RaceEngine:
     SKILL_SPREAD = 4.0        # best driver 4s/lap faster than worst
+    SECONDS_PER_HOUR = 3600.0
+    # Laps on fresh tires before degradation begins to kick in
+    TIRE_BREAK_IN_LAPS = 8
+    # Speed-factor reference multiplier (slightly above base = reference slow-car pace)
+    SPEED_REF_FACTOR = 1.05
+    # Denominator scaling for the speed factor: ~12% of base lap time
+    SPEED_REF_DENOM_FACTOR = 0.12
+    # How closely cars bunch together per position behind leader under caution
+    CAUTION_BUNCH_INTERVAL = 0.005
 
     # Average speeds (mph) by track type — used to derive realistic base lap times
     TRACK_AVG_SPEEDS: dict[str, float] = {
@@ -116,7 +125,7 @@ class RaceEngine:
 
         # Compute realistic base lap time from track geometry
         avg_speed = self.TRACK_AVG_SPEEDS.get(track_type, 176.0)
-        self.BASE_LAP_TIME = (track_length_miles / avg_speed) * 3600
+        self.BASE_LAP_TIME = (track_length_miles / avg_speed) * self.SECONDS_PER_HOUR
 
         # Track-specific tire falloff
         self.TIRE_FALLOFF_RATE = self.TRACK_TIRE_FALLOFF.get(track_type, 0.018)
@@ -171,7 +180,7 @@ class RaceEngine:
             noise = random.gauss(0, self.BASE_LAP_TIME * 0.003)
             return self.BASE_LAP_TIME * 1.55 + skill_delta + noise
         skill_delta = (1.0 - car.driver.skill) * self.SKILL_SPREAD
-        tire_delta = max(0, car.tire_age - 8) * self.TIRE_FALLOFF_RATE
+        tire_delta = max(0, car.tire_age - self.TIRE_BREAK_IN_LAPS) * self.TIRE_FALLOFF_RATE
         fuel_delta = car.fuel * (self.BASE_LAP_TIME * 0.005)   # heavier car = slower
         noise = random.gauss(0, self.NOISE_SIGMA)
         return self.BASE_LAP_TIME + skill_delta + tire_delta + fuel_delta + noise
@@ -204,9 +213,9 @@ class RaceEngine:
             return
         active.sort(key=lambda c: (c.lap, c.track_position), reverse=True)
         leader_pos = active[0].track_position
-        # Each car bunches to within 0.005 track-fraction per position of the leader
+        # Each car bunches to within CAUTION_BUNCH_INTERVAL track-fraction per position
         for i, car in enumerate(active[1:], 1):
-            target = leader_pos - (i * 0.005)
+            target = leader_pos - (i * self.CAUTION_BUNCH_INTERVAL)
             if car.track_position < target:
                 car.track_position = target
 
@@ -292,8 +301,8 @@ class RaceEngine:
 
             if not car.pitting_this_lap:
                 # Advance is proportional to how fast the car goes vs. average
-                ref_time = self.BASE_LAP_TIME * 1.05  # slightly above base = reference slow car
-                speed_factor = (ref_time - min(lap_time, ref_time)) / max(ref_time * 0.12, 1.0)
+                ref_time = self.BASE_LAP_TIME * self.SPEED_REF_FACTOR
+                speed_factor = (ref_time - min(lap_time, ref_time)) / max(ref_time * self.SPEED_REF_DENOM_FACTOR, 1.0)
                 advance = 0.85 + speed_factor * 0.3 + random.uniform(-0.02, 0.02)
                 car.track_position = (car.track_position + advance) % 1.0
 
